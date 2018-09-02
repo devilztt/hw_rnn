@@ -53,30 +53,14 @@ with tf.Session() as sess:
     for x in range(1):
         logging.debug('epoch [{0}]....'.format(x))
         state = sess.run(model.state_tensor)
-        for dl in utils.get_train_data(vocabulary, batch_size=FLAGS.batch_size, num_steps=FLAGS.num_steps):
+        for dl in utils.get_train_data(vocabulary,dictionary, batch_size=FLAGS.batch_size, num_steps=FLAGS.num_steps):
 
             ##################
             # Your Code here
-            ##################
-            #将得到的batch中文的汉字转为数字对应字典中的索引
-            x_batch=dl[0]
-            y_batch=dl[1]
-            x_batch_index=np.zeros_like(x_batch, dtype=np.int32)
-            y_batch_index=np.zeros_like(x_batch, dtype=np.int32)
-            
-            for row in range(x_batch.shape[0]):
-                for col in range(x_batch.shape[1]):
-                    try:
-                        x_batch_index[row][col]=dictionary[x_batch[row][row]]
-                    except KeyError:
-                        x_batch_index[row][col] = dictionary['UNK']
+            ##################   
                         
-                    try:
-                        y_batch_index[row][col]=dictionary[y_batch[row][row]]
-                    except KeyError:
-                        y_batch_index[row][col] = dictionary['UNK']    
-                        
-            feed_dict = {model.X: x_batch_index,
+            feed_dict = {model.X: dl[0],
+                         model.Y: dl[1],
                          model.state_tensor: state,
                          model.keep_prob: 0.9}
             gs, _, state, l, summary_string = sess.run(

@@ -27,7 +27,7 @@ def parse_args(check=True):
     parser.add_argument('--dictionary', type=str, default='dictionary.json',
                         help='path to dictionary.json.')
 
-    parser.add_argument('--reverse_dictionary', type=str, default='reverse_dictionary.json',
+    parser.add_argument('--reverse_dictionary', type=str, default='reversed_dictionary.json',
                         help='path to reverse_dictionary.json.')
 
     parser.add_argument('--learning_rate', type=float, default=0.001,

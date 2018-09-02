@@ -66,16 +66,16 @@ class Model():
             cell_lstm=tf.contrib.rnn.BasicLSTMCell(self.dim_embedding,state_is_tuple=True)
             
             #设置dropput
-            cell_drop = tf.nn.rnn_cell.DropoutWrapper(lstm_cell, output_keep_prob=0.9)
+            cell_drop = tf.nn.rnn_cell.DropoutWrapper(cell_lstm, output_keep_prob=self.keep_prob)
             
             #RNN的堆叠
             cell_multi = tf.contrib.rnn.MultiRNNCell([cell_drop] * self.rnn_layers, state_is_tuple=True)
         
             #开始的state全零初始化
-            initial_state = cell_multi.zero_state(batch_size, tf.float32)
-            
+            self.state_tensor = cell_multi.zero_state(self.batch_size, tf.float32)
+
             #获得outputs和last_state 
-            outputs, last_state = tf.nn.dynamic_rnn(cell_multi, data, initial_state=initial_state)
+            outputs, self.outputs_state_tensor = tf.nn.dynamic_rnn(cell_multi, data, initial_state=self.state_tensor)
             
             # flatten it
             #使output的列数和weights的行数相等
@@ -89,13 +89,13 @@ class Model():
             #设置W权重和偏置以及计算logits
             W=tf.Variable(tf.truncated_normal([self.dim_embedding, self.num_words ]))#产生正态分布做权重
             Bias=tf.Variable(tf.zeros(shape=[self.num_words]))
-            logits=tf.matmul(seq_output_final, weights)+Bias
+            logits=tf.matmul(seq_output_final, W)+Bias
 
         tf.summary.histogram('logits', logits)
 
         self.predictions = tf.nn.softmax(logits, name='predictions')
 
-        loss = tf.nn.sparse_softmax_cross_entropy_with_logits(labels=tf.reshape(self.Y, [-1])
+        loss = tf.nn.sparse_softmax_cross_entropy_with_logits(labels=tf.reshape(self.Y, [-1]),logits=logits)
         mean, var = tf.nn.moments(logits, -1)
         self.loss = tf.reduce_mean(loss)
         tf.summary.scalar('logits_loss', self.loss)

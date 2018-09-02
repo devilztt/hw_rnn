@@ -27,14 +27,22 @@ def index_data(sentences, dictionary):
     return index.reshape(shape)
 
 
-def get_train_data(vocabulary, batch_size, num_steps):
+def get_train_data(vocabulary,dictionary, batch_size, num_steps):
     ##################
     # Your Code here
     ##################
     #根据vocabulary 生成 raw_x 和 raw_y 其中raw_y 是raw_x的下一个字
-    raw_x = vocabulary
-    raw_y = vocabulary[1:]
-    raw_y.append(vocabulary[0])
+    raw_x=[]
+    
+    for ch in vocabulary:
+        try:
+            raw_x.append(dictionary[ch])
+        except KeyError:
+            raw_x.append(dictionary['UNK'])
+    
+    raw_y=raw_x[1:]
+    raw_y.append(4999)
+        
     
     data_length = len(raw_x)
 
@@ -44,8 +52,8 @@ def get_train_data(vocabulary, batch_size, num_steps):
     data_x = np.zeros([batch_size, batch_partition_length], dtype=np.int32)
     data_y = np.zeros([batch_size, batch_partition_length], dtype=np.int32)
     for i in range(batch_size):
-        data_x[i] = raw_x[batch_partition_length * i:batch_partition_length * (i + 1)]
-        data_y[i] = raw_y[batch_partition_length * i:batch_partition_length * (i + 1)]
+         data_x[i] = raw_x[batch_partition_length * i:batch_partition_length * (i + 1)]
+         data_y[i] = raw_y[batch_partition_length * i:batch_partition_length * (i + 1)]
     # further divide batch partitions into num_steps for truncated backprop
     epoch_size = batch_partition_length // num_steps
 
