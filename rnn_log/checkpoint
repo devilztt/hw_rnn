@@ -1,6 +1,0 @@
-model_checkpoint_path: "model.ckpt-2100"
-all_model_checkpoint_paths: "model.ckpt-2060"
-all_model_checkpoint_paths: "model.ckpt-2070"
-all_model_checkpoint_paths: "model.ckpt-2080"
-all_model_checkpoint_paths: "model.ckpt-2090"
-all_model_checkpoint_paths: "model.ckpt-2100"
