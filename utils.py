@@ -33,7 +33,7 @@ def get_train_data(vocabulary,dictionary, batch_size, num_steps):
     ##################
     #根据vocabulary 生成 raw_x 和 raw_y 其中raw_y 是raw_x的下一个字
     raw_x=[]
-    
+    #在vocabulary中遍历word并转为对应的index，本来想用列表表达式来做的，但是考虑到会报keyerror....
     for ch in vocabulary:
         try:
             raw_x.append(dictionary[ch])
@@ -47,16 +47,18 @@ def get_train_data(vocabulary,dictionary, batch_size, num_steps):
     data_length = len(raw_x)
 
     # partition raw data into batches and stack them vertically in a data matrix
+    #将原始数据根据batch_size划分为批，并将它们垂直堆叠在数据矩阵中。
     batch_partition_length = data_length // batch_size
     #data_x=batch_size*batch_partition_length
     data_x = np.zeros([batch_size, batch_partition_length], dtype=np.int32)
     data_y = np.zeros([batch_size, batch_partition_length], dtype=np.int32)
+    #在矩阵上从上到下将原数据按batch_partition_length切割放入矩阵中
     for i in range(batch_size):
          data_x[i] = raw_x[batch_partition_length * i:batch_partition_length * (i + 1)]
          data_y[i] = raw_y[batch_partition_length * i:batch_partition_length * (i + 1)]
     # further divide batch partitions into num_steps for truncated backprop
     epoch_size = batch_partition_length // num_steps
-
+    #通过生成器的形式每次返回一个num_steps长的batch
     for i in range(epoch_size):
         x = data_x[:, i * num_steps:(i + 1) * num_steps]
         y = data_y[:, i * num_steps:(i + 1) * num_steps]
