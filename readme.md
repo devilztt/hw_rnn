@@ -6,7 +6,7 @@
 ![](https://i.imgur.com/u040XTQ.png)
 
 下图所示为RNN_LSTM在运行完30个epoch共计13小时后的输出log
-![](https://i.imgur.com/eX8L6B3.png)
+![](https://i.imgur.com/BmpXk5i.png)
 
 # 总结
 ---
